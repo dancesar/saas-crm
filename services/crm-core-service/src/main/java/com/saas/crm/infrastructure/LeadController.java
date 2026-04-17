@@ -1,6 +1,7 @@
 package com.saas.crm.infrastructure;
 
 import com.saas.crm.application.CreateLeadUseCase;
+import com.saas.crm.application.port.LeadRepositoryPort;
 import com.saas.crm.domain.Lead;
 import com.saas.crm.infrastructure.dto.CreateLeadRequestDTO;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/leads")
 public class LeadController {
 
-    private final CreateLeadUseCase useCase = new CreateLeadUseCase();
+    private final CreateLeadUseCase useCase;
+
+    public LeadController(LeadRepositoryPort repositoryPort) {
+        this.useCase = new CreateLeadUseCase(repositoryPort);
+    }
 
     @PostMapping
     public Lead create(@RequestBody CreateLeadRequestDTO request) {
