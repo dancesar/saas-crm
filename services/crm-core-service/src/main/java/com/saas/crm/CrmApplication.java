@@ -1,4 +1,4 @@
-package crm_core_service;
+package com.saas.crm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
