@@ -7,6 +7,15 @@ public class Lead {
     private String phone;
 
     public Lead(String name, String email, String phone) {
+
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name is required");
+        }
+
+        if (email == null || !email.contains("@")) {
+            throw new IllegalArgumentException("Invalid email");
+        }
+
         this.name = name;
         this.email = email;
         this.phone = phone;
