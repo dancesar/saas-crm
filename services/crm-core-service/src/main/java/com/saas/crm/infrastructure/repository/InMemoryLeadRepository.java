@@ -2,12 +2,11 @@ package com.saas.crm.infrastructure.repository;
 
 import com.saas.crm.application.port.LeadRepositoryPort;
 import com.saas.crm.domain.Lead;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+//@Repository
 public class InMemoryLeadRepository implements LeadRepositoryPort {
 
     private final List<Lead> database = new  ArrayList<>();
