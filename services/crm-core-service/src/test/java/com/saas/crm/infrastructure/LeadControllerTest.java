@@ -42,7 +42,7 @@ public class LeadControllerTest {
         mockMvc.perform(post("/leads")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Danillo"))
                 .andExpect(jsonPath("$.email").value("danillo@email.com"));
     }
