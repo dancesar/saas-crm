@@ -1,6 +1,7 @@
 package com.saas.crm.infrastructure;
 
 import com.saas.crm.application.CreateLeadUseCase;
+import com.saas.crm.application.ListLeadsUseCase;
 import com.saas.crm.application.port.LeadRepositoryPort;
 import com.saas.crm.domain.Lead;
 import com.saas.crm.infrastructure.dto.CreateLeadRequestDTO;
@@ -25,10 +26,13 @@ public class LeadController {
 
     private static final Logger log = LoggerFactory.getLogger(LeadController.class);
 
-    private final CreateLeadUseCase useCase;
+    private final CreateLeadUseCase createLeadUseCase;
 
-    public LeadController(LeadRepositoryPort repositoryPort) {
-        this.useCase = new CreateLeadUseCase(repositoryPort);
+    private final ListLeadsUseCase listLeadsUseCase;
+
+    public LeadController(CreateLeadUseCase createLeadUseCase, ListLeadsUseCase listLeadsUseCase) {
+        this.createLeadUseCase = createLeadUseCase;
+        this.listLeadsUseCase = listLeadsUseCase;
     }
 
     @Operation(summary = "Criar um novo lead")
@@ -43,7 +47,7 @@ public class LeadController {
                 request.getPhone()
         );
 
-        Lead saved = useCase.execute(lead);
+        Lead saved = createLeadUseCase.execute(lead);
 
         LeadResponseDTO response = new LeadResponseDTO(
                 null, // por enquanto não temos ID no domain
@@ -52,7 +56,6 @@ public class LeadController {
                 saved.getPhone()
         );
 
-        // 👇 adicionando links
         response.add(linkTo(methodOn(LeadController.class).create(request)).withSelfRel());
         response.add(linkTo(methodOn(LeadController.class).list()).withRel("all-leads"));
 
@@ -62,7 +65,25 @@ public class LeadController {
     }
 
     @GetMapping
-    public List<LeadResponseDTO> list() {
-        return List.of(); // por enquanto vazio
+    public ResponseEntity<List<LeadResponseDTO>> list() {
+
+        List<Lead> leads = listLeadsUseCase.execute();
+
+        List<LeadResponseDTO> response = leads.stream()
+                .map(lead -> {
+                    LeadResponseDTO dto = new LeadResponseDTO(
+                            null,
+                            lead.getName(),
+                            lead.getEmail(),
+                            lead.getPhone()
+                    );
+
+                    dto.add(linkTo(methodOn(LeadController.class).list()).withSelfRel());
+
+                    return dto;
+                })
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 }
