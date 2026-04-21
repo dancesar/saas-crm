@@ -6,6 +6,8 @@ import com.saas.crm.infrastructure.entity.LeadEntity;
 import com.saas.crm.infrastructure.repository.jpa.LeadJpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class LeadRepositoryImpl implements LeadRepositoryPort{
 
@@ -32,4 +34,15 @@ public class LeadRepositoryImpl implements LeadRepositoryPort{
                 saved.getPhone()
         );
     }
+
+    @Override
+    public Optional<Lead> findById(Long id) {
+        return jpaRepository.findById(id)
+                .map(entity -> new Lead(
+                        entity.getName(),
+                        entity.getEmail(),
+                        entity.getPhone()
+           ));
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.saas.crm.infrastructure;
 
 import com.saas.crm.application.CreateLeadUseCase;
+import com.saas.crm.application.GetLeadByIdUseCase;
 import com.saas.crm.application.port.LeadRepositoryPort;
 import com.saas.crm.domain.Lead;
 import com.saas.crm.infrastructure.dto.CreateLeadRequestDTO;
@@ -27,8 +28,11 @@ public class LeadController {
 
     private final CreateLeadUseCase useCase;
 
-    public LeadController(LeadRepositoryPort repositoryPort) {
+    private final GetLeadByIdUseCase getLeadByIdUseCase;
+
+    public LeadController(LeadRepositoryPort repositoryPort, GetLeadByIdUseCase getLeadByIdUseCase) {
         this.useCase = new CreateLeadUseCase(repositoryPort);
+        this.getLeadByIdUseCase = getLeadByIdUseCase;
     }
 
     @Operation(summary = "Criar um novo lead")
@@ -64,5 +68,24 @@ public class LeadController {
     @GetMapping
     public List<LeadResponseDTO> list() {
         return List.of(); // por enquanto vazio
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<LeadResponseDTO> getById(@PathVariable Long id) {
+
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+
+        Lead lead = getLeadByIdUseCase.execute(id);
+
+        LeadResponseDTO response = new LeadResponseDTO(
+                null,
+                lead.getName(),
+                lead.getEmail(),
+                lead.getPhone()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
