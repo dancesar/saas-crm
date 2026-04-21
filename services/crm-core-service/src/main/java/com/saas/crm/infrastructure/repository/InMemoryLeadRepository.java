@@ -16,4 +16,9 @@ public class InMemoryLeadRepository implements LeadRepositoryPort {
         database.add(lead);
         return lead;
     }
+
+    @Override
+    public List<Lead> findAll() {
+        return List.of();
+    }
 }
