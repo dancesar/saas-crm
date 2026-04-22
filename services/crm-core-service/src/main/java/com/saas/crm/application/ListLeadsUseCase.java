@@ -2,12 +2,15 @@ package com.saas.crm.application;
 
 import com.saas.crm.application.port.LeadRepositoryPort;
 import com.saas.crm.domain.Lead;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ListLeadsUseCase {
+    private static final Logger log = LoggerFactory.getLogger(ListLeadsUseCase.class);
 
     private final LeadRepositoryPort repository;
 
@@ -16,6 +19,13 @@ public class ListLeadsUseCase {
     }
 
     public List<Lead> execute() {
-        return repository.findAll();
+
+        log.info("action=list_leads status=start");
+
+        List<Lead> leads = repository.findAll();
+
+        log.info("action=list_leads status=success total={}", leads.size());
+
+        return leads;
     }
 }
