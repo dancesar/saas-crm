@@ -16,7 +16,7 @@ public class CreateLeadUseCaseTest {
         LeadRepositoryPort fakeRepository = mock(LeadRepositoryPort.class);
 
         // Criamos o objeto uma única vez
-        Lead lead = new Lead("Danillo", "danillo@email.com", "11999999999");
+        Lead lead = new Lead(1L,"Danillo", "danillo@email.com", "11999999999");
 
         // Configuramos o mock: quando o save for chamado, retorna o objeto que criamos
         when(fakeRepository.save(any(Lead.class))).thenReturn(lead);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saas.crm.application.CreateLeadUseCase;
 import com.saas.crm.application.GetLeadByIdUseCase;
 import com.saas.crm.application.port.LeadRepositoryPort;
+import com.saas.crm.application.port.ListLeadsUseCase;
 import com.saas.crm.domain.Lead;
 import com.saas.crm.infrastructure.dto.CreateLeadRequestDTO;
 import org.junit.jupiter.api.Test;
@@ -35,24 +36,28 @@ public class LeadControllerTest {
     private CreateLeadUseCase createLeadUseCase;
 
     @MockitoBean
+    private ListLeadsUseCase listLeadsUseCase;
+
+    @MockitoBean
     private GetLeadByIdUseCase getLeadByIdUseCase;
 
     @Test
     void shouldCreateLeadSuccessfully() throws Exception {
 
         CreateLeadRequestDTO request = new CreateLeadRequestDTO();
+        request.setId(1L);
         request.setName("Danillo");
         request.setEmail("danillo@email.com");
         request.setPhone("11999999999");
 
-        // 👇 ESSA LINHA RESOLVE O PROBLEMA
-        when(leadRepositoryPort.save(any()))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(createLeadUseCase.execute(any(Lead.class)))
+                .thenReturn(new Lead(1L, "Danillo", "danillo@email.com", "11999999999"));
 
         mockMvc.perform(post("/leads")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Danillo"))
                 .andExpect(jsonPath("$.email").value("danillo@email.com"));
     }
@@ -61,7 +66,7 @@ public class LeadControllerTest {
     void shouldReturnLeadById() throws Exception {
 
         when(getLeadByIdUseCase.execute(1L))
-                .thenReturn(new Lead("Danillo", "danillo@email.com", "11999999999"));
+                .thenReturn(new Lead(1L, "Danillo", "danillo@email.com", "11999999999"));
 
         mockMvc.perform(get("/leads/1"))
                 .andExpect(status().isOk())
