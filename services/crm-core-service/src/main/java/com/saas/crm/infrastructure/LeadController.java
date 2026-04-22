@@ -2,8 +2,7 @@ package com.saas.crm.infrastructure;
 
 import com.saas.crm.application.CreateLeadUseCase;
 import com.saas.crm.application.GetLeadByIdUseCase;
-import com.saas.crm.application.port.LeadRepositoryPort;
-import com.saas.crm.application.port.ListLeadsUseCase;
+import com.saas.crm.application.ListLeadsUseCase;
 import com.saas.crm.domain.Lead;
 import com.saas.crm.infrastructure.dto.CreateLeadRequestDTO;
 import com.saas.crm.infrastructure.dto.LeadResponseDTO;

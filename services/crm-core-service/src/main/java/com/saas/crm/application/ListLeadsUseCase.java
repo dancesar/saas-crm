@@ -1,5 +1,6 @@
-package com.saas.crm.application.port;
+package com.saas.crm.application;
 
+import com.saas.crm.application.port.LeadRepositoryPort;
 import com.saas.crm.domain.Lead;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
