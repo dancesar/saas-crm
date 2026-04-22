@@ -1,9 +1,7 @@
 package com.saas.crm.infrastructure;
 
 import com.saas.crm.application.CreateLeadUseCase;
-import com.saas.crm.application.GetLeadByIdUseCase;
 import com.saas.crm.application.port.LeadRepositoryPort;
-import com.saas.crm.application.port.ListLeadsUseCase;
 import com.saas.crm.domain.Lead;
 import com.saas.crm.infrastructure.dto.CreateLeadRequestDTO;
 import com.saas.crm.infrastructure.dto.LeadResponseDTO;
@@ -29,16 +27,8 @@ public class LeadController {
 
     private final CreateLeadUseCase useCase;
 
-    private final GetLeadByIdUseCase getLeadByIdUseCase;
-
-    private final ListLeadsUseCase listLeadsUseCase;
-
-    public LeadController(CreateLeadUseCase createLeadUseCase,
-                          GetLeadByIdUseCase getLeadByIdUseCase, ListLeadsUseCase listLeadsUseCase) {
-
-        this.useCase = createLeadUseCase;
-        this.getLeadByIdUseCase = getLeadByIdUseCase;
-        this.listLeadsUseCase = listLeadsUseCase;
+    public LeadController(LeadRepositoryPort repositoryPort) {
+        this.useCase = new CreateLeadUseCase(repositoryPort);
     }
 
     @Operation(summary = "Criar um novo lead")
@@ -48,7 +38,6 @@ public class LeadController {
         log.info("action=http_create_lead status=received email={}", request.getEmail());
 
         Lead lead = new Lead(
-                request.getId(),
                 request.getName(),
                 request.getEmail(),
                 request.getPhone()
@@ -57,7 +46,7 @@ public class LeadController {
         Lead saved = useCase.execute(lead);
 
         LeadResponseDTO response = new LeadResponseDTO(
-                saved.getId(),
+                null, // por enquanto não temos ID no domain
                 saved.getName(),
                 saved.getEmail(),
                 saved.getPhone()
@@ -73,38 +62,7 @@ public class LeadController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LeadResponseDTO>> list() {
-
-        List<Lead> leads = listLeadsUseCase.execute();
-
-        List<LeadResponseDTO> response = leads.stream()
-                .map(lead -> new LeadResponseDTO(
-                        lead.getId(),
-                        lead.getName(),
-                        lead.getEmail(),
-                        lead.getPhone()
-                ))
-                .toList();
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<LeadResponseDTO> getById(@PathVariable Long id) {
-
-        if (id <= 0) {
-            throw new IllegalArgumentException("Invalid ID");
-        }
-
-        Lead lead = getLeadByIdUseCase.execute(id);
-
-        LeadResponseDTO response = new LeadResponseDTO(
-                lead.getId(),
-                lead.getName(),
-                lead.getEmail(),
-                lead.getPhone()
-        );
-
-        return ResponseEntity.ok(response);
+    public List<LeadResponseDTO> list() {
+        return List.of(); // por enquanto vazio
     }
 }
